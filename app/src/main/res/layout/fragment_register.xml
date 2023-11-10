@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/splash_bg"
+    tools:context=".view.LoginFragment">
+
+
+
+    
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_splash"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    
+    <TextView
+        android:id="@+id/tv_title_reg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IC MOVIE"
+        android:fontFamily="@font/montserrat_extrabold"
+        android:textSize="28sp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_title_reg2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="     Enter your registered \nPhone Number to Sign Up"
+        android:textSize="14sp"
+        android:textColor="#999898"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/montserrat_semibold"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_reg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <Button
+        android:id="@+id/btn_sign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign Up"
+        android:padding="8sp"
+        android:textSize="20sp"
+        android:fontFamily="@font/montserrat_semibold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.25"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_reg2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+    <TextView
+        android:id="@+id/tv_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_sign"
+        android:text="I already have an account?"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:textColor="#92929D"
+        app:layout_constraintHorizontal_bias="0.32"
+        android:layout_marginTop="34dp"/>
+
+    <TextView
+        android:id="@+id/tv_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:fontFamily="@font/montserrat_semibold"
+        android:layout_marginStart="8dp"
+        android:scrollbarSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/tv_text"
+        app:layout_constraintTop_toTopOf="@id/tv_text"
+        app:layout_constraintBottom_toBottomOf="@id/tv_text"
+        android:textSize="14sp"
+        android:textColor="#FFC107"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/line"
+        app:layout_constraintTop_toTopOf="@id/tv_title_reg3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title_reg3"
+        app:layout_constraintEnd_toStartOf="@id/tv_title_reg3"/>
+
+
+    <TextView
+        android:id="@+id/tv_title_reg3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Or Sign up with"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_semibold"
+        app:layout_constraintTop_toBottomOf="@id/tv_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="#92929D"
+        android:layout_marginTop="20dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/line"
+        app:layout_constraintStart_toEndOf="@id/tv_title_reg3"
+        app:layout_constraintTop_toTopOf="@id/tv_title_reg3"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title_reg3"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageView
+        android:id="@+id/iv_google_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        app:layout_constraintHorizontal_bias="0.2"
+      app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/google_icon"/>
+
+    <ImageView
+        android:id="@+id/iv_apple_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/iv_google_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/iv_google_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/apple_icon"/>
+
+    <ImageView
+        android:id="@+id/iv_facebook_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_bias="0.80"
+        app:layout_constraintTop_toTopOf="@id/iv_google_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/iv_google_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/facebook_icon"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

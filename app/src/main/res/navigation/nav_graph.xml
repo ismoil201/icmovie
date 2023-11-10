@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="kr.dev.icmovie.view.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+
+            android:id="@+id/action_splashFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
+        <action
+
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="kr.dev.icmovie.view.RegisterFragment"
+        android:label="register_fragment"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"
+            />
+        <action
+
+            android:id="@+id/action_registerFragment_to_signFragment"
+            app:destination="@id/signFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="kr.dev.icmovie.view.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signFragment"
+        android:name="kr.dev.icmovie.view.SignFragment"
+        android:label="fragment_sign"
+        tools:layout="@layout/fragment_sign" >
+        <action
+            android:id="@+id/action_signFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="kr.dev.icmovie.view.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_allFragment"
+            app:destination="@id/musicFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_popularFragment"
+            app:destination="@id/popularFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            />
+        <action
+            android:id="@+id/action_homeFragment_to_trailerFragment"
+            app:destination="@id/avtoFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_saveFragment"
+            app:destination="@id/saveFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/popularFragment"
+        android:name="kr.dev.icmovie.view.PopularFragment"
+        android:label="fragment_popular"
+        tools:layout="@layout/fragment_popular" >
+        <action
+            android:id="@+id/action_popularFragment_to_datailFragment"
+            app:destination="@id/datailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/musicFragment"
+        android:name="kr.dev.icmovie.view.MusicFragment"
+        android:label="fragment_all"
+        tools:layout="@layout/fragment_music" >
+        <action
+            android:id="@+id/action_musicFragment_to_musicDetatilFragment"
+            app:destination="@id/musicDetatilFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="kr.dev.icmovie.view.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="false"
+        />
+    <fragment
+        android:id="@+id/avtoFragment"
+        android:name="kr.dev.icmovie.view.AvtoFragment"
+        android:label="fragment_trailer"
+        tools:layout="@layout/fragment_avto"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="true">
+        <action
+            android:id="@+id/action_avtoFragment_to_avtoDetailFragment"
+            app:destination="@id/avtoDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="kr.dev.icmovie.view.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/datailFragment"
+        android:name="kr.dev.icmovie.view.DatailFragment"
+        android:label="fragment_datail"
+        tools:layout="@layout/fragment_datail" >
+        <action
+            android:id="@+id/action_datailFragment_to_detailFragment2"
+            app:destination="@id/detailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/avtoDetailFragment"
+        android:name="kr.dev.icmovie.view.AvtoDetailFragment"
+        android:label="fragment_avto_detail"
+        tools:layout="@layout/fragment_avto_detail" >
+        <action
+            android:id="@+id/action_avtoDetailFragment_to_avtoDetail2Fragment"
+            app:destination="@id/avtoDetail2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/saveFragment"
+        android:name="kr.dev.icmovie.view.SaveFragment"
+        android:label="fragment_save"
+        tools:layout="@layout/fragment_save" />
+    <fragment
+        android:id="@+id/detailFragment2"
+        android:name="kr.dev.icmovie.view.DetailFragment2"
+        android:label="fragment_detail2"
+        tools:layout="@layout/fragment_detail2" />
+    <fragment
+        android:id="@+id/musicDetatilFragment"
+        android:name="kr.dev.icmovie.view.MusicDetatilFragment"
+        android:label="fragment_music_detatil"
+        tools:layout="@layout/fragment_music_detatil" >
+        <action
+            android:id="@+id/action_musicDetatilFragment_to_musicDetail2Fragment"
+            app:destination="@id/musicDetail2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/musicDetail2Fragment"
+        android:name="kr.dev.icmovie.view.MusicDetail2Fragment"
+        android:label="fragment_music_detail2"
+        tools:layout="@layout/fragment_music_detail2" />
+    <fragment
+        android:id="@+id/avtoDetail2Fragment"
+        android:name="kr.dev.icmovie.view.AvtoDetail2Fragment"
+        android:label="fragment_avto_detail2"
+        tools:layout="@layout/fragment_avto_detail2" />
+</navigation>
