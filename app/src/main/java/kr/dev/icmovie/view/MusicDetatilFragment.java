@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -172,12 +173,38 @@ public class MusicDetatilFragment extends Fragment implements OnclickItemPo {
         binding.tvRatingDetail.setText(currentMusic.getViewNum());
         binding.tvGenreDetail.setText(currentMusic.getAccountName());
         setupRawVideo(currentMusic);
-        binding.btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
+        if (currentMusic.isSaved()) {
+            binding.btnSave.setImageResource(R.drawable.saved_svg); // saqlangan holat
+        } else {
+            binding.btnSave.setImageResource(R.drawable.saved_svg1); // saqlanmagan holat
+        }
+
+        binding.btnSave.setOnClickListener(view -> {
+            AppDataBase db = AppDataBase.getInstance(requireContext());
+            MusicDao musicDao = db.musicDao();
+
+            new Thread(() -> {
+                // isSaved holatini teskari qilamiz
+                boolean newState = !currentMusic.isSaved();
+                currentMusic.setSaved(newState);
+
+                // Yangilangan musicni bazaga saqlash
+                musicDao.updateMusic(currentMusic);
+
+                // UI yangilash
+                requireActivity().runOnUiThread(() -> {
+                    if (newState) {
+                        binding.btnSave.setImageResource(R.drawable.saved_svg);
+                        Toast.makeText(requireContext(), "Saved ✅" + currentMusic.getMusicName(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        binding.btnSave.setImageResource(R.drawable.saved_svg1);
+                        Toast.makeText(requireContext(), "Removed ❎" + currentMusic.getMusicName(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).start();
         });
+
     }
 
     private  void  loadMusics(){

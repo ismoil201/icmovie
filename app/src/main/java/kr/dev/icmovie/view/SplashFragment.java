@@ -155,22 +155,22 @@ public class SplashFragment extends Fragment {
                     musicDao.insertMusic(new Music(R.drawable.img_23,
                             "Korean Kpop","859.4M",
                             "ROSÉ & Bruno Mars - APT. (Official Music Video)",
-                            R.drawable.black_pink,R.raw.rose));
+                            R.drawable.black_pink,R.raw.rose,false));
 
                     musicDao.insertMusic(new Music(R.drawable.trips,
                             "tripleS", "453.2M",
                             "tripleS(트리플에스) '깨어' (Are You Alive) Official MV",
-                            R.drawable.img_6,R.raw.triple));
+                            R.drawable.img_6,R.raw.triple,false));
                     musicDao.insertMusic(new Music(R.drawable.img_24,
                             "WEVERSE MUZ","533.9M",
                             "BABYMONSTER - 'DRIP' M/V",
-                            R.drawable.blue,R.raw.baby));
+                            R.drawable.blue,R.raw.baby,false));
 
                     musicDao.insertMusic(new Music(
                             R.drawable.jennie, "Jennie Official",
                             "234.6M","JENNIE - like JENNIE " +
                             "(Official Live Performance Video l NPOP LIMITED EDITION - SIDE A)",
-                            R.drawable.img_24,R.raw.jennie
+                            R.drawable.img_24,R.raw.jennie,false
                     ));
 
 
@@ -178,7 +178,7 @@ public class SplashFragment extends Fragment {
                             new Music(R.drawable.img_3,"Moviy qo'ng'iz","75.3K",
                                     "Meksikalik o'smir Xayme Reyes" +
                                             " unga super kuchlar beradigan begona kostyumni oladi."
-                                    ,R.drawable.apple_icon,R.raw.baby
+                                    ,R.drawable.apple_icon,R.raw.baby,false
                     ));
 
                     musicDao.insertMusic(
@@ -186,7 +186,8 @@ public class SplashFragment extends Fragment {
                                     "6.4","ohn Wick uncovers a path to defeating The" +
                                     " High Table. But before he can earn his freedom, Wick must face off against" +
                                     " a new enemy with powerful alliances across the globe and forces that turn old " +
-                                    "friends into foes.",R.drawable.baymaks,R.raw.john)
+                                    "friends into foes.",
+                                    R.drawable.baymaks,R.raw.john,false)
                     );
 
                     musicDao.insertMusic(
@@ -197,7 +198,7 @@ public class SplashFragment extends Fragment {
                                             "even touch. But true love knows no boundaries, and the stronger the " +
                                             "feelings, the greater the" +
                                             " temptation to break the rules…",
-                                    R.drawable.john,R.raw.night1)
+                                    R.drawable.john,R.raw.night1,false)
                     );
 
 

@@ -1,66 +1,117 @@
 package kr.dev.icmovie.view;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import kr.dev.icmovie.R;
+import kr.dev.icmovie.adapters.MusicAdapter;
+import kr.dev.icmovie.adapters.OnclickItemPo;
+import kr.dev.icmovie.databinding.FragmentMusicBinding;
+import kr.dev.icmovie.databinding.FragmentSaveBinding;
+import kr.dev.icmovie.room.AppDataBase;
+import kr.dev.icmovie.room.dao.MovieDao;
+import kr.dev.icmovie.room.dao.MusicDao;
+import kr.dev.icmovie.room.entity.Movie;
+import kr.dev.icmovie.room.entity.Music;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SaveFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class SaveFragment extends Fragment {
+public class SaveFragment extends Fragment implements OnclickItemPo {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Music music;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+
+    private List<Music> musicList;
+    private List<Movie> movieList;
+
+    private FragmentSaveBinding binding;
+    private MusicAdapter adapter;
 
     public SaveFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SaveFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SaveFragment newInstance(String param1, String param2) {
-        SaveFragment fragment = new SaveFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_save, container, false);
+        binding = FragmentSaveBinding.inflate(getLayoutInflater(),container, false);
+        return  binding.getRoot();
+
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("Music", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+
+        musicList = new ArrayList<>();
+        adapter = new MusicAdapter(musicList,this);
+
+        binding.rvSave.setAdapter(adapter);
+
+        loadMusic();
+
+
+    }
+
+    private  void  loadMusic(){
+        AppDataBase db = AppDataBase.getInstance(requireContext());
+        MusicDao musicDao = db.musicDao();
+        MovieDao movieDao = db.movieDao();
+
+        new Thread(() -> {
+
+            List<Music> list = musicDao.getAllSavedMusic();
+            requireActivity().runOnUiThread(() -> {
+                musicList.clear();
+                musicList.addAll(list);
+                adapter.notifyDataSetChanged();
+
+            });
+        }).start();
+    }
+
+    @Override
+    public void clickItem(int position) {
+
+        Music clickedMusic = musicList.get(position);
+        String json = new Gson().toJson(clickedMusic);
+
+        editor.putString("musicdata",json);
+        editor.apply();
+
+        try {
+
+            Navigation.findNavController(binding.getRoot()).navigate(R.id.musicDetatilFragment);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Navigation error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("NAV_ERROR", "Error navigating: ", e);
+        }
     }
 }

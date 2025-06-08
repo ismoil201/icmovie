@@ -16,15 +16,30 @@ public class Music {
     int accountImage;
 
     int musicVideo;
+    boolean isSaved;
 
 
-    public Music( int musicImage, String accountName, String viewNum, String musicName, int accountImage, int musicVideo) {
+
+
+    public Music( int musicImage, String accountName, String viewNum,
+                  String musicName, int accountImage, int musicVideo, boolean isSaved) {
         this.musicImage = musicImage;
         this.accountName = accountName;
         this.viewNum = viewNum;
         this.musicName = musicName;
         this.accountImage = accountImage;
         this.musicVideo = musicVideo;
+        this.isSaved = isSaved;
+    }
+
+
+    public boolean isSaved() {
+        return isSaved;
+    }
+
+
+    public void setSaved(boolean saved) {
+        isSaved = saved;
     }
 
     public int getId() {

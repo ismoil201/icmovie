@@ -12,7 +12,7 @@ import kr.dev.icmovie.room.dao.MusicDao;
 import kr.dev.icmovie.room.entity.Movie;
 import kr.dev.icmovie.room.entity.Music;
 
-@Database(entities = {Movie.class, Music.class}, version = 4)
+@Database(entities = {Movie.class, Music.class}, version = 6)
 public abstract class AppDataBase extends RoomDatabase {
 
     private static AppDataBase INSTANCE;

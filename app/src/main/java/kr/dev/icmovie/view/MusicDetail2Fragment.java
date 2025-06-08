@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.MediaController;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -174,11 +175,38 @@ public class MusicDetail2Fragment extends Fragment  implements OnclickItemPo {
         binding.tvRatingDetail.setText(currentMusic.getViewNum());
         binding.tvGenreDetail.setText(currentMusic.getAccountName());
         setupRawVideo(currentMusic);
-        binding.btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
+        // 🔽 isSaved tekshiruv — iconni o‘rnatish
+        if (currentMusic.isSaved()) {
+            binding.btnSave.setImageResource(R.drawable.saved_svg); // saqlangan holat
+        } else {
+            binding.btnSave.setImageResource(R.drawable.saved_svg1); // saqlanmagan holat
+        }
+
+
+        binding.btnSave.setOnClickListener(view -> {
+            AppDataBase db = AppDataBase.getInstance(requireContext());
+            MusicDao musicDao = db.musicDao();
+
+            new Thread(() -> {
+                // isSaved holatini teskari qilamiz
+                boolean newState = !currentMusic.isSaved();
+                currentMusic.setSaved(newState);
+
+                // Yangilangan musicni bazaga saqlash
+                musicDao.updateMusic(currentMusic);
+
+                // UI yangilash
+                requireActivity().runOnUiThread(() -> {
+                    if (newState) {
+                        binding.btnSave.setImageResource(R.drawable.saved_svg);
+                        Toast.makeText(requireContext(), "Saved ✅" + currentMusic.getMusicName(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        binding.btnSave.setImageResource(R.drawable.saved_svg1);
+                        Toast.makeText(requireContext(), "Removed ❎" + currentMusic.getMusicName(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).start();
         });
     }
 
