@@ -3,6 +3,8 @@ package kr.dev.icmovie.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -13,15 +15,19 @@ import androidx.navigation.Navigation;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.MediaController;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import kr.dev.icmovie.R;
@@ -30,43 +36,35 @@ import kr.dev.icmovie.adapters.PopularAdapter;
 import kr.dev.icmovie.databinding.FragmentDatailBinding;
 import kr.dev.icmovie.databinding.FragmentDetail2Binding;
 import kr.dev.icmovie.models.PopularData;
+import kr.dev.icmovie.room.AppDataBase;
+import kr.dev.icmovie.room.dao.MovieDao;
+import kr.dev.icmovie.room.entity.Movie;
 
 public class DetailFragment2 extends Fragment implements OnclickItemPo {
-    private static final String ITEM_KEY = "param1";
 
-    private static final String ARG_PARAM2 = "param2";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private PopularData popularData ;
-    private String mParam2;
     private FragmentDetail2Binding binding;
-    private PopularAdapter popularAdapter;
-    boolean[] doubleBackToExitPressedOnce = new boolean[0];
-
-
+    private PopularAdapter adapter;
+    private boolean isFullScreen = false;
+    private ViewGroup.LayoutParams originalParams;
+    private FrameLayout.LayoutParams fullscreenParams;
+    private List<Movie> movieList;
     private List<PopularData> popularDataList;
+
+
     public DetailFragment2() {
         // Required empty public constructor
     }
 
 
-    public static DetailFragment2 newInstance(String param1, String param2) {
-        DetailFragment2 fragment = new DetailFragment2();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requireActivity().getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
-        if (getArguments() != null) {
 
-
-            popularData=(PopularData) getArguments().getSerializable(ITEM_KEY);
-        }
     }
 
     @Override
@@ -74,6 +72,10 @@ public class DetailFragment2 extends Fragment implements OnclickItemPo {
                              Bundle savedInstanceState) {
         getActivity().findViewById(R.id.bottom_navigation).setVisibility(View.GONE);
         binding = FragmentDetail2Binding.inflate(inflater,container, false);
+
+        movieList = new ArrayList<>();
+        loadMovies();
+
         return binding.getRoot();
     }
 
@@ -84,134 +86,142 @@ public class DetailFragment2 extends Fragment implements OnclickItemPo {
 
         editor =  sharedPreferences.edit();
 
-        loadList();
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), onBackPressedCallback);
+
 
         setDetailItem();
-        popularAdapter = new PopularAdapter(popularDataList,this);
+        adapter = new PopularAdapter(movieList,this);
 
-        binding.rvDatail.setAdapter(popularAdapter);
+
+        binding.rvDatail.setAdapter(adapter);
 
 //
 
     }
 
+
+    private void setupRawVideo(Movie movie) {
+        binding.btnPlay.setOnClickListener(view -> {
+            Uri videoUri = Uri.parse("android.resource://"
+                    + getActivity().getPackageName() + "/" +movie.getMovie());
+            MediaController mediaController = new MediaController(getActivity());
+
+            binding.ivImageDetail.setVideoURI(videoUri);
+            binding.ivImageDetail.setMediaController(mediaController);
+            mediaController.setAnchorView(binding.ivImageDetail);
+            binding.ivImageDetail.start();
+        });
+
+        binding.btnFullscreen.setOnClickListener(v -> toggleFullscreen());
+    }
+
+    private void toggleFullscreen() {
+        if (isFullScreen) {
+            // Return to portrait
+            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+            binding.videoContainer.setLayoutParams(originalParams);
+            requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        } else {
+            // Go to landscape
+            requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            if (originalParams == null) {
+                originalParams = binding.videoContainer.getLayoutParams();
+            }
+
+            fullscreenParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
+            fullscreenParams.gravity = Gravity.CENTER;
+            binding.videoContainer.setLayoutParams(fullscreenParams);
+
+            requireActivity().getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
+        }
+
+        isFullScreen = !isFullScreen;
+    } //full screen
 
     private final OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true /* Enabled by default */) {
         @Override
         public void handleOnBackPressed() {
             // Handle the back button event
 
-            Navigation.findNavController(binding.getRoot()).navigate(R.id.homeFragment);
-        }
+            if (isFullScreen) {
+                // Fullscreen rejimdan chiqish uchun ekran orientatsiyasini portretga o'zgartiramiz
+                requireActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                // Video konteynerni asl holatga qaytamiz
+                if (originalParams != null) {
+                    binding.videoContainer.setLayoutParams(originalParams);
+                }
+
+                // Tizim UI ni ko'rsatamiz
+                requireActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
+                isFullScreen = false; // holatni yangilaymiz
+            } else {
+                // Agar fullscreen bo'lmasa, oddiy navigatsiya amalga oshadi
+                Navigation.findNavController(binding.getRoot()).navigate(R.id.homeFragment);
+            }        }
 
 
     };
     public void setDetailItem(){
         Gson gson = new Gson();
-
         sharedPreferences = getActivity().getSharedPreferences("Test", Context.MODE_PRIVATE);
 //
-        Type token = new TypeToken<PopularData>(){}.getType();
-//         String popularDataPosition= gson.fromJson(sharedPreferences.getString("data", "{}"),token);
-        popularData= gson.fromJson(sharedPreferences.getString("data", "{}"),token);
+        Type token = new TypeToken<Movie>(){}.getType();
+        Movie currectMovie = gson.fromJson(sharedPreferences.getString("data", "{}"),token);
 
-//         popularData = popularDataList.get(Integer.parseInt(popularDataPosition));
-        binding.ivImageDetail.setImageResource(popularData.getFilmImage());
-        binding.tvFilmName1.setText(popularData.getName());
-        binding.tvGenreDetail.setText(popularData.getGenre());
-        binding.tvInfoTitle.setText(popularData.getAbout());
-        binding.tvRatingDetail.setText(popularData.getRating());
+        binding.tvFilmName1.setText(currectMovie.getName());
+        binding.tvGenreDetail.setText(currectMovie.getGenre());
+        binding.tvInfoTitle.setText(currectMovie.getDescription());
+        binding.tvRatingDetail.setText(currectMovie.getRating());
+        setupRawVideo(currectMovie);
+        binding.btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
-    private    void loadList(){
+    private void loadMovies() {
+        AppDataBase db = AppDataBase.getInstance(requireContext());
+        MovieDao movieDao = db.movieDao();
 
-        popularDataList =  new ArrayList<>();
+        new Thread(() -> {
+            movieList = movieDao.getAllMovies();
 
-        for (int i = 0; i < 2; i++) {
-
-
-            popularDataList.add(new PopularData(R.drawable.img,"Tungi Poyezd Premyera","6.7",
-                    "Jangari","Ragnarning Vikinglar otryadining hikoyasi. U Viking qabilalarining " +
-                    "qiroli bo'lish uchun ko'tarildi. Norvegiya afsonasiga ko'ra, u urush va " +
-                    "jangchilar xudosi Odinning bevosita avlodi bo'lgan."));
-
-            popularDataList.add(new PopularData(R.drawable.rohiba,"Rohibaning la'nati Ujas kino",
-                    "7.1","Qo'rqinchli",
-                    "Ruminiyada tanho monastirda yosh nun o'z joniga qasd qilganda, " +
-                            "Vatikan ruhoniyning hodisasini tumanli o'tmish bilan va qaytib kelmaydigan" +
-                            " va'dalar ostonasida yangi boshlovchi bilan tekshiradi. Faqat hayotlarini emas, " +
-                            "balki ruhlarini xavf ostiga qo'yib, ular shaytoniy rohibaning ko'rinishini qabul " +
-                            "qilRuminiyada tanho monastirda yosh nun o'z joniga qasd qilganda, Vatikan " +
-                            "ruhoniyning hodisasini tumanli o'tmish bilan va qaytib kelmaydigan va'dalar " +
-                            "ostonasida yangi boshlovchi bilan tekshiradi. Faqat hayotlarini emas, balki " +
-                            "ruhlarini xavf ostiga qo'yib, ular shaytoniy rohibaning ko'rinishini qabul" +
-                            " qilgan yovuz kuchga duch kelishadi va monastir tirik va la'natlangan jang maydoniga " +
-                            "aylanadi.gan yovuz kuchga duch kelishadi va monastir tirik va la'natlangan " +
-                            "jang maydoniga aylanadi."));
-            popularDataList.add(new PopularData(R.drawable.blue,"Moviy qo'ng'iz","7.3",
-                    "Fantastika","Meksikalik o'smir Xayme Reyes" +
-                    " unga super kuchlar beradigan begona kostyumni oladi."));
-
-            popularDataList.add(new PopularData(R.drawable.super_heroes,
-                    "Super-qahramonlar ligasi Multfilm ","6.0","Multfilm",
-                    "Super-qahramonlar ligasi Multfilm Uzbek tilida 2022 O'zbekcha tarjima HD"));
-            popularDataList.add(new PopularData(R.drawable.super_hayvon,
-                    "Super uy hayvonlari ligasi DC","6.7","Multfilm",
-                    "Kripto iti Supermenning eng yaxshi do'sti bo'lib, uning xo'jayini kabi " +
-                            "yerdan tashqari kuchlarga ega. Ular birgalikda Metropolisda jinoyatchilikka " +
-                            "qarshi jasorat bilan kurashadilar. Ammo Supermen va Adolat ligasining" +
-                            " boshqa a'zolari noma'lum yovuz odamlar tomonidan o'g'irlab ketilganda, " +
-                            "Kripto yangi yordamchilarni, ya'ni to'satdan super kuchga ega bo'lgan " +
-                            "boshpanadagi turli xil hayvonlarni o'rgatishi kerak. Super uy hayvonlarining" +
-                            " mo'ynali ligasi Supermenni va butun dunyoni qutqara oladimi?"));
-
-            popularDataList.add(new PopularData(R.drawable.viking,"Vikinglar: Valhalla",
-                    "7.2","Tarix | Jangari","Vikinglarning Angliyani zabt " +
-                    "etishga urinishi, Leif Erikssonning Amerikaga sayohati va vikinglar orasida " +
-                    "nasroniylikning tarqalishi fonida sevgi, adovat va qasos haqidagi " +
-                    "dramatik hikoya."));
-            popularDataList.add(new PopularData(R.drawable.avatar,"Аватар 2: Путь воды 2022 ",
-                    "7.5","Fantastika | Fentezi","Askarning avatar qiyofasini " +
-                    "olganidan so'ng, Jeyk Sulli Navi xalqining etakchisiga aylanadi va yangi " +
-                    "do'stlarni Yerdan kelgan yollanma tadbirkorlardan himoya qilish vazifasini " +
-                    "o'z zimmasiga oladi. Endi uning uchun kurashadigan odam bor - Jeyk, uning " +
-                    "go'zal sevgilisi Neytiri bilan. Og'ir qurollangan yerliklar Pandoraga qaytganda," +
-                    " Jeyk javob berishga tayyor."));
-
-            popularDataList.add(new PopularData(R.drawable.john,"John Wick: Chapter 4",
-                    "6.4","Action","ohn Wick uncovers a path to defeating The" +
-                    " High Table. But before he can earn his freedom, Wick must face off against" +
-                    " a new enemy with powerful alliances across the globe and forces that turn old " +
-                    "friends into foes."));
-            popularDataList.add(new PopularData(R.drawable.wakanda,"Black Panther: Wakanda Forever",
-                    "6.7","Fantastika | Jangari","После смерти короля Т`Чаллы" +
-                    " королева Рамонда, Шури, М`Баку, Окойе и Дора Милаж сражаются, чтобы " +
-                    "защитить Ваканду от мировых держав."));
-
-            popularDataList.add(new PopularData(R.drawable.drama,
-                    "Five Feet Apart watch online in Tas-ix","6.1","Drama",
-                    "The space in which they exist, cruel dictates the condition — the " +
-                            "lovers must be no closer than a meter from each other they can't " +
-                            "even touch. But true love knows no boundaries, and the stronger the " +
-                            "feelings, the greater the temptation to break the rules…"));
-            popularDataList.add(new PopularData(R.drawable.baymaks,"BayMax","7.3",
-                    "Multfilm","Mehribon va sezgir tibbiy robot Baymax va uning " +
-                    "do'stlarining sarguzashtlari haqida."));
-
-        }
+            Collections.shuffle(movieList);
 
 
+            requireActivity().runOnUiThread(() -> {
+                adapter = new PopularAdapter(movieList, this);
+                binding.rvDatail.setAdapter(adapter);
+                adapter.notifyDataSetChanged(); // Yangilanishni bildirish
+            });
+        }).start();
     }
+
+
     @Override
     public void clickItem(int position) {
-      editor.remove("data");
-        Gson gson = new Gson();
-        popularData = popularDataList.get(position);
-        editor.putString("data",gson.toJson(popularData));
+        editor.remove("data");
+        Movie clickedMovie = movieList.get(position);
+        String json = new Gson().toJson(clickedMovie);
+        editor.putString("data", json);
+        editor.apply();
+
 
         editor.commit();
 
-        Log.i("TAG", popularData.getName());
         Navigation.findNavController(binding.getRoot()).navigate(R.id.datailFragment);
     }
 }

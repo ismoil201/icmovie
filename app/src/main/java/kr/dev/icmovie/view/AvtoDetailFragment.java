@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -25,12 +24,9 @@ import java.util.List;
 
 import kr.dev.icmovie.R;
 import kr.dev.icmovie.adapters.AvtoAdapter;
-import kr.dev.icmovie.adapters.MusicAdapter;
 import kr.dev.icmovie.adapters.OnclickItemPo;
 import kr.dev.icmovie.databinding.FragmentAvtoDetailBinding;
-import kr.dev.icmovie.databinding.FragmentMusicDetail2Binding;
 import kr.dev.icmovie.models.AvtoData;
-import kr.dev.icmovie.models.MusicData;
 
 public class AvtoDetailFragment extends Fragment  implements OnclickItemPo {
 

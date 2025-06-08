@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,148 +25,76 @@ import kr.dev.icmovie.adapters.OnclickItemPo;
 import kr.dev.icmovie.adapters.PopularAdapter;
 import kr.dev.icmovie.databinding.FragmentPopularBinding;
 import kr.dev.icmovie.models.PopularData;
+import kr.dev.icmovie.room.AppDataBase;
+import kr.dev.icmovie.room.dao.MovieDao;
+import kr.dev.icmovie.room.entity.Movie;
 
 public class PopularFragment extends Fragment implements OnclickItemPo {
 
 
-
-    private static final String ITEM_KEY = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private FragmentPopularBinding binding;
+    private PopularAdapter adapter;
 
-    private  List<PopularData> popularDataList;
-    private List<PopularData> popularDataList2;
-
-
-    private PopularAdapter popularAdapter;
-    private String mParam1;
-    private String mParam2;
-    static PopularData popularData;
+    private       List<Movie> movieList;
     private SharedPreferences sharedPreferences;
+
     private SharedPreferences.Editor editor;
 
     public PopularFragment() {
         // Required empty public constructor
     }
 
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentPopularBinding.inflate(getLayoutInflater(), container, false);
 
-        binding = FragmentPopularBinding.inflate(getLayoutInflater(),container, false);
+
+        // Ma'lumotlarni yuklash
+
         return binding.getRoot();
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences("Test", Context.MODE_PRIVATE);
-        editor =  sharedPreferences.edit();
+        editor = sharedPreferences.edit();
 
-        loadList();
-
-        popularAdapter = new PopularAdapter(popularDataList,this);
-
-        binding.rvPopular.setAdapter(popularAdapter);
-
-    }
-    private    void loadList(){
-
-        popularDataList =  new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-
-
-        popularDataList.add(new PopularData(R.drawable.img,"Tungi Poyezd Premyera","6.7",
-                "Jangari","Ragnarning Vikinglar otryadining hikoyasi. U Viking qabilalarining " +
-                "qiroli bo'lish uchun ko'tarildi. Norvegiya afsonasiga ko'ra, u urush va " +
-                "jangchilar xudosi Odinning bevosita avlodi bo'lgan."));
-
-        popularDataList.add(new PopularData(R.drawable.rohiba,"Rohibaning la'nati Ujas kino",
-                "7.1","Qo'rqinchli",
-                "Ruminiyada tanho monastirda yosh nun o'z joniga qasd qilganda, " +
-                        "Vatikan ruhoniyning hodisasini tumanli o'tmish bilan va qaytib kelmaydigan" +
-                        " va'dalar ostonasida yangi boshlovchi bilan tekshiradi. Faqat hayotlarini emas, " +
-                        "balki ruhlarini xavf ostiga qo'yib, ular shaytoniy rohibaning ko'rinishini qabul " +
-                        "qilRuminiyada tanho monastirda yosh nun o'z joniga qasd qilganda, Vatikan " +
-                        "ruhoniyning hodisasini tumanli o'tmish bilan va qaytib kelmaydigan va'dalar " +
-                        "ostonasida yangi boshlovchi bilan tekshiradi. Faqat hayotlarini emas, balki " +
-                        "ruhlarini xavf ostiga qo'yib, ular shaytoniy rohibaning ko'rinishini qabul" +
-                        " qilgan yovuz kuchga duch kelishadi va monastir tirik va la'natlangan jang maydoniga " +
-                        "aylanadi.gan yovuz kuchga duch kelishadi va monastir tirik va la'natlangan " +
-                        "jang maydoniga aylanadi."));
-                popularDataList.add(new PopularData(R.drawable.blue,"Moviy qo'ng'iz","7.3",
-                        "Fantastika","Meksikalik o'smir Xayme Reyes" +
-                        " unga super kuchlar beradigan begona kostyumni oladi."));
-
-                popularDataList.add(new PopularData(R.drawable.super_heroes,
-                        "Super-qahramonlar ligasi Multfilm ","6.0","Multfilm",
-                        "Super-qahramonlar ligasi Multfilm Uzbek tilida 2022 O'zbekcha tarjima HD"));
-                popularDataList.add(new PopularData(R.drawable.super_hayvon,
-                        "Super uy hayvonlari ligasi DC","6.7","Multfilm",
-                        "Kripto iti Supermenning eng yaxshi do'sti bo'lib, uning xo'jayini kabi " +
-                                "yerdan tashqari kuchlarga ega. Ular birgalikda Metropolisda jinoyatchilikka " +
-                                "qarshi jasorat bilan kurashadilar. Ammo Supermen va Adolat ligasining" +
-                                " boshqa a'zolari noma'lum yovuz odamlar tomonidan o'g'irlab ketilganda, " +
-                                "Kripto yangi yordamchilarni, ya'ni to'satdan super kuchga ega bo'lgan " +
-                                "boshpanadagi turli xil hayvonlarni o'rgatishi kerak. Super uy hayvonlarining" +
-                                " mo'ynali ligasi Supermenni va butun dunyoni qutqara oladimi?"));
-
-                popularDataList.add(new PopularData(R.drawable.viking,"Vikinglar: Valhalla",
-                        "7.2","Tarix | Jangari","Vikinglarning Angliyani zabt " +
-                        "etishga urinishi, Leif Erikssonning Amerikaga sayohati va vikinglar orasida " +
-                        "nasroniylikning tarqalishi fonida sevgi, adovat va qasos haqidagi " +
-                        "dramatik hikoya."));
-                popularDataList.add(new PopularData(R.drawable.avatar,"Аватар 2: Путь воды 2022 ",
-                        "7.5","Fantastika | Fentezi","Askarning avatar qiyofasini " +
-                        "olganidan so'ng, Jeyk Sulli Navi xalqining etakchisiga aylanadi va yangi " +
-                        "do'stlarni Yerdan kelgan yollanma tadbirkorlardan himoya qilish vazifasini " +
-                        "o'z zimmasiga oladi. Endi uning uchun kurashadigan odam bor - Jeyk, uning " +
-                        "go'zal sevgilisi Neytiri bilan. Og'ir qurollangan yerliklar Pandoraga qaytganda," +
-                        " Jeyk javob berishga tayyor."));
-
-                popularDataList.add(new PopularData(R.drawable.john,"John Wick: Chapter 4",
-                        "6.4","Action","ohn Wick uncovers a path to defeating The" +
-                        " High Table. But before he can earn his freedom, Wick must face off against" +
-                        " a new enemy with powerful alliances across the globe and forces that turn old " +
-                        "friends into foes."));
-                popularDataList.add(new PopularData(R.drawable.wakanda,"Black Panther: Wakanda Forever",
-                        "6.7","Fantastika | Jangari","После смерти короля Т`Чаллы" +
-                        " королева Рамонда, Шури, М`Баку, Окойе и Дора Милаж сражаются, чтобы " +
-                        "защитить Ваканду от мировых держав."));
-
-                popularDataList.add(new PopularData(R.drawable.drama,
-                        "Five Feet Apart watch online in Tas-ix","6.1","Drama",
-                        "The space in which they exist, cruel dictates the condition — the " +
-                                "lovers must be no closer than a meter from each other they can't " +
-                                "even touch. But true love knows no boundaries, and the stronger the " +
-                                "feelings, the greater the temptation to break the rules…"));
-                popularDataList.add(new PopularData(R.drawable.baymaks,"BayMax","7.3",
-                        "Multfilm","Mehribon va sezgir tibbiy robot Baymax va uning " +
-                        "do'stlarining sarguzashtlari haqida."));
-
-        }
-
+        movieList = new ArrayList<>();
+        adapter = new PopularAdapter(movieList, this);
+        binding.rvPopular.setAdapter(adapter);
+        loadMovies();
 
     }
 
+    private void loadMovies() {
+        AppDataBase db = AppDataBase.getInstance(requireContext());
+        MovieDao movieDao = db.movieDao();
 
+        new Thread(() -> {
+            List<Movie> list = movieDao.getAllMovies();
+            requireActivity().runOnUiThread(() -> {
+                movieList.clear();
+                movieList.addAll(list);
+                adapter.notifyDataSetChanged();
+            });
+        }).start();
+    }
     @Override
     public void clickItem(int position) {
-        editor.remove("data");
-        Gson gson = new Gson();
-        popularData = popularDataList.get(position);
-        editor.putInt("position", position);
-        editor.putString("data",gson.toJson(popularData));
 
-        editor.commit();
+        Movie clickedMovie = movieList.get(position);
+        String json = new Gson().toJson(clickedMovie);
+        editor.putString("data", json);
+        editor.apply();
 
-        Log.i("TAG", popularData.getName());
-        Navigation.findNavController(binding.getRoot()).navigate(R.id.datailFragment);
+        try {
+
+            Navigation.findNavController(binding.getRoot()).navigate(R.id.datailFragment);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Navigation error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("NAV_ERROR", "Error navigating: ", e);
+        }
     }
 
 }

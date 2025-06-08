@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import kr.dev.icmovie.databinding.ItemCarsBinding;
-import kr.dev.icmovie.databinding.ItemMusicBinding;
 import kr.dev.icmovie.models.AvtoData;
-import kr.dev.icmovie.models.MusicData;
 
 public class AvtoAdapter  extends RecyclerView.Adapter<AvtoAdapter.Vh> {
     List<AvtoData> avtoDataList;

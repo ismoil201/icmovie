@@ -21,11 +21,9 @@ import java.util.List;
 
 import kr.dev.icmovie.R;
 import kr.dev.icmovie.adapters.AvtoAdapter;
-import kr.dev.icmovie.adapters.MusicAdapter;
 import kr.dev.icmovie.adapters.OnclickItemPo;
 import kr.dev.icmovie.databinding.FragmentAvtoBinding;
 import kr.dev.icmovie.models.AvtoData;
-import kr.dev.icmovie.models.MusicData;
 
 
 public class AvtoFragment extends Fragment implements OnclickItemPo {
