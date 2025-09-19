@@ -48,14 +48,7 @@ public class SearchFragment extends Fragment {
     }
 
 
-    public static SearchFragment newInstance(String param1, String param2) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,18 +74,17 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadMusics();
-        loadAvto();
-        loadPopular();
-
-        adapter = new MusicAdapter(musicList);
-        binding.rvMusic.setAdapter(adapter);
-
-        avtoAdapter = new AvtoAdapter(avtoDataList);
-        binding.rvAvto.setAdapter(avtoAdapter);
-
-//        popularAdapter = new PopularAdapter(popularDataList);
-        binding.rvMovie.setAdapter(popularAdapter);
+//        loadAvto();
+//        loadPopular();
+//
+//        adapter = new MusicAdapter(musicList);
+//        binding.rvMusic.setAdapter(adapter);
+//
+//        avtoAdapter = new AvtoAdapter(avtoDataList);
+//        binding.rvAvto.setAdapter(avtoAdapter);
+//
+////        popularAdapter = new PopularAdapter(popularDataList);
+//        binding.rvMovie.setAdapter(popularAdapter);
 
     }
 
