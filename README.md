@@ -35,4 +35,4 @@ It was built as a personal project to practice Android development and provide a
 ## 🚀 Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/iCMovie.git
+   git clone https://git@github.com:ismoil201/icmovie.git
